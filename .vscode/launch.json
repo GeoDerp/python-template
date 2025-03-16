@@ -12,7 +12,7 @@
       "name": "Run Project",
       "type": "debugpy",
       "request": "launch",
-      "module": "python_template.main", //change to package name
+      "module": "${fileWorkspaceFolderBasename}.main", //change to package name
       "console": "integratedTerminal",
       "purpose": [
         "debug-in-terminal"
