@@ -1,0 +1,17 @@
+{
+    "dev.containers.dockerPath": "podman",
+    "files.autoSaveWhenNoErrors": true,
+    "files.autoSaveWorkspaceFilesOnly": true,
+    "dev.containers.dockerComposePath": "podman-compose",
+    "docker.commands.composeUp": [
+        {
+            "label": "Compose Up",
+            "template": "${composeCommand} ${configurationFile} up ${detached} ${build}"
+        }
+    ],
+    "trivy.offlineScan": true,
+    "sonarlint.connectedMode.project": {
+        "connectionId": "geoderp",
+        "projectKey": "GeoDerp_python-template"
+    }
+}
