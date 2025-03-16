@@ -1,0 +1,50 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "python",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"context": "../"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {}
+	},
+	// uncomment if the app/source directory is in a sub folder
+	// "workspaceMount": "source=${localWorkspaceFolder}/myApp,target=/workspace,type=bind",
+	// "workspaceFolder": "/workspace",
+
+	//may be needed for Podman
+	"runArgs": [
+		"--userns=keep-id",
+		"--pid=host"
+		//"--device=nvidia.com/gpu=all" // may need this for Nvidia GPU passthrough
+		//"--device=/dev/kfd", "--device=/dev/dri", "--security-opt=no-new-privileges", "--cap-drop=ALL" // may need this for AMD GPU passthrough
+	],
+	"remoteUser": "root",
+	"containerUser": "root",
+
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+		  "extensions": [
+			"ms-python.debugpy",
+			"ms-python.python",
+			"SonarSource.sonarlint-vscode",
+			"AquaSecurityOfficial.trivy-vulnerability-scanner",
+			"ms-python.black-formatter",
+			"ms-python.flake8",
+			"ms-python.mypy-type-checker"
+		],
+		  "settings": {
+			"[python]": {
+			  "editor.formatOnSave": true,
+			  "editor.codeActionsOnSave": {
+				"source.fixAll": "explicit",
+				"source.organizeImports": "explicit"
+			  },
+			  "editor.defaultFormatter": "ms-python.black-formatter"
+			}
+		  }
+		}
+	  }	  
+}
