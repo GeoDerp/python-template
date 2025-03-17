@@ -78,13 +78,6 @@ runs:
       uses: actions/setup-python@v5
       id: setup_python
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
-      run: |
-        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
-        uv tool install ruff
-        uv tool install mypy
-      shell: bash
-
     - name: Debug uv
       run: |
         pipx ensurepath # uv should be in the same path
@@ -95,6 +88,16 @@ runs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: uv sync --all-extras --dev
       shell: bash
+
+    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
+      run: |
+        grep -q 'pytest' pyproject.toml || uv pip uninstall pytest
+        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
+        uv tool install ruff
+        uv tool install mypy
+      shell: bash
+
+
 
     - name: Check Format with ruf
       uses: astral-sh/ruff-action@v3
