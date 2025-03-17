@@ -80,9 +80,9 @@ runs:
       with:
         cache: uv
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages } } mypy ruf pytest'
+    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy ruf pytest'
       run: |
-        uv install mypy ${{ inputs.pipx_packages }}
+        uv install mypy ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install ruf pytest
       shell: bash
 
