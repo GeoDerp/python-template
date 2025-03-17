@@ -80,9 +80,9 @@ runs:
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
       run: |
-        uv pip install ruff ${{ steps.variable_setup.outputs.uv_packages }}
+        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
+        uv tool install ruff
         uv tool install mypy
-        uv tool install pytest-cov
       shell: bash
 
     - name: Debug uv
@@ -117,7 +117,7 @@ runs:
     - name: Test with PyTest-cov
       shell: bash
       run: |
-        uvx pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        uv run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
 
     - name: Type Check with Mypy
       shell: bash
