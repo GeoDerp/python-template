@@ -83,7 +83,7 @@ runs:
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
       run: |
-        uv pip install ${{ steps.variable_setup.outputs.uv_packages }}
+        uv pip install ruff ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install mypy
         uv tool install pytest
       shell: bash
