@@ -82,7 +82,7 @@ runs:
       run: |
         uv pip install ruff ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install mypy
-        uv tool install pytest
+        uv tool install pytest-cov
       shell: bash
 
     - name: Debug uv
@@ -114,7 +114,7 @@ runs:
       run: |
         echo "pytest_fail_percent_options=$(echo '--cov-fail-under=${{ inputs.pytest_coverage_threshold_percent }}')" >> $GITHUB_ENV
 
-    - name: Test with PyTest
+    - name: Test with PyTest-cov
       shell: bash
       run: |
         uvx pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
