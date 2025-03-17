@@ -90,18 +90,17 @@ runs:
       run: uv sync --all-extras --dev
       shell: bash
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest-cov'
-      run: |
-        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
-        uv tool install ruff
-        uv tool install mypy
-      shell: bash
-
     - name: Check Format with ruf
       uses: astral-sh/ruff-action@v3
       with:
         args: "format --check"
         src: "./${{ inputs.source_dir }}"
+
+    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest-cov'
+      run: |
+        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
+        uv tool install mypy
+      shell: bash
 
     - name: Parse PyTest coverage xml file name option
       shell: bash
