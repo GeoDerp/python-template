@@ -39,6 +39,9 @@ inputs:
     required: false
     default: ''
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 runs:
   using: 'composite'
   steps:
@@ -62,21 +65,19 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITLEAKS_LICENSE: ${{ inputs.gitleaks_token }}
 
-    - name: Setup Variables for uv caching
-      id: variable_setup
-      run: echo "uv_home=$PIPX_HOME" >> $GITHUB_OUTPUT
-      shell: bash
-
     - name: Install uv
       id: install_uv
       uses: astral-sh/setup-uv@v5
       with:
         enable-cache: true
-        cache-local-path: "${{ steps.variable_setup.outputs.uv_home }}"
+        cache-dependency-glob: "uv.lock"
+
 
     - name: Set up Python
       uses: actions/setup-python@v5
       id: setup_python
+      with:
+        python-version-file: ".python-version"
 
     - name: Debug uv
       run: |
@@ -89,9 +90,8 @@ runs:
       run: uv sync --all-extras --dev
       shell: bash
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
+    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest-cov'
       run: |
-        uv pip freeze | grep -q 'pytest' || uv pip uninstall pytest
         uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install ruff
         uv tool install mypy
