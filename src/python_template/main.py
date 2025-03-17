@@ -22,10 +22,6 @@ def main() -> None:
     serve(app, host="0.0.0.0", port=8080, threads=8)
 
 
-if __name__ == "__main__":
-    main()
-
-
 def gunicorn(settings_override=None):
     global app
     gunicorn_logger = logging.getLogger("gunicorn.error")
@@ -33,3 +29,7 @@ def gunicorn(settings_override=None):
     app.logger.setLevel(logging.INFO)
     main()
     return app
+
+
+if __name__ == "__main__":
+    main()
