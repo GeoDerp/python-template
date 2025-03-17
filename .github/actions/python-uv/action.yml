@@ -39,9 +39,6 @@ inputs:
     required: false
     default: ''
 
-env:
-  UV_SYSTEM_PYTHON: 1
-
 runs:
   using: 'composite'
   steps:
