@@ -91,13 +91,11 @@ runs:
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
       run: |
-        grep -q 'pytest' pyproject.toml || uv pip uninstall pytest
+        uv pip freeze | grep -q 'pytest' || uv pip uninstall pytest
         uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install ruff
         uv tool install mypy
       shell: bash
-
-
 
     - name: Check Format with ruf
       uses: astral-sh/ruff-action@v3
