@@ -77,8 +77,6 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v5
       id: setup_python
-      with:
-        cache: uv
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy ruf pytest'
       run: |
