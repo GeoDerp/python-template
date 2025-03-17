@@ -80,8 +80,10 @@ runs:
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy ruf pytest'
       run: |
-        uv install mypy ${{ steps.variable_setup.outputs.uv_packages }}
+        uv pip install mypy ${{ steps.variable_setup.outputs.uv_packages }}
         uv tool install ruf pytest
+      env:
+        UV_SYSTEM_PYTHON: 1
       shell: bash
 
     - name: Debug uv
