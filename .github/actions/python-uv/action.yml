@@ -81,9 +81,11 @@ runs:
       uses: actions/setup-python@v5
       id: setup_python
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy ruf pytest'
+    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest'
       run: |
-        uv tool install mypy ruf pytest ${{ steps.variable_setup.outputs.uv_packages }}
+        uv pip install ${{ steps.variable_setup.outputs.uv_packages }}
+        uv tool install mypy
+        uv tool install pytest
       shell: bash
 
     - name: Debug uv
@@ -118,12 +120,12 @@ runs:
     - name: Test with PyTest
       shell: bash
       run: |
-        uv run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        uvx pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
 
     - name: Type Check with Mypy
       shell: bash
       run: |
-        uv run mypy ${{ inputs.source_dir }}
+        uvx mypy ${{ inputs.source_dir }}
 
     - name: Override Coverage Source Path for Sonar
       # needed for converting pytest coverage to sonarcloud formatting, details here:
