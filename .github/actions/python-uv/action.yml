@@ -39,6 +39,9 @@ inputs:
     required: false
     default: ''
 
+env:
+  UV_SYSTEM_PYTHON: 1
+
 runs:
   using: 'composite'
   steps:
@@ -80,10 +83,8 @@ runs:
 
     - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy ruf pytest'
       run: |
-        uv pip install mypy ${{ steps.variable_setup.outputs.uv_packages }}
-        uv tool install ruf pytest
-      env:
-        UV_SYSTEM_PYTHON: 1
+        uv pip install ${{ steps.variable_setup.outputs.uv_packages }}
+        uv tool install mypy ruf pytest
       shell: bash
 
     - name: Debug uv
@@ -91,19 +92,6 @@ runs:
         pipx ensurepath # uv should be in the same path
         uv tree
       shell: bash
-
-    - name: Create uv venv
-      run: |
-        uv venv 
-        source .venv/bin/activate
-      shell: bash
-
-    - name: Cache uv .venv
-      uses: actions/cache@v3
-      id: cached_uv_dependencies
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ inputs.python_version }}-${{ hashFiles('**/uv.lock') }}
 
     - name: Install uv dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
