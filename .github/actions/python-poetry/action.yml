@@ -168,13 +168,13 @@ runs:
     - name: Type Check with Mypy
       shell: bash
       run: |
-        mypy ${{ inputs.source_dir }}
+        poetry run mypy ${{ inputs.source_dir }}
 
     - name: Security Lint with Bandit
       shell: bash
       run: |
         # bandit - log level low, critical issues only. Reports only if high confidence
-        bandit -ll -ii -r . -x ./.venv
+        poetry run bandit -ll -ii -r . -x ./.venv
 
 
     - name: Override Coverage Source Path for Sonar
