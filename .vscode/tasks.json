@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Project Install",
+            "command": "poetry",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "args": [
+                "install",
+            ],
+            "presentation": {
+                "echo": true,
+                "panel": "shared",
+                "focus": true
+            },
+        }
+    ]
+}
