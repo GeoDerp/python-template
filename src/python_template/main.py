@@ -1,35 +1,26 @@
-import logging
+import os.path
 
-from flask import Flask, render_template
-from waitress import serve
+import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 
-app = Flask(__name__, template_folder="templates")
-
-
-@app.route("/")
-@app.route("/index")
-def index() -> str:
-    return "hi"
+app = FastAPI()
 
 
-@app.route("/hello")
-def hello() -> str:
-    return render_template("hello.html")
+def get_html_response() -> str:
+    file: str = "src/python_template/templates/hello.html"
+    if os.path.isfile(file):
+        with open(file) as f:
+            return f.read()
+    else:
+        raise HTTPException(status_code=404, detail="HTML template not found")
 
 
-def main() -> None:
-    app.logger.setLevel(logging.DEBUG)
-    serve(app, host="0.0.0.0", port=8080, threads=8)
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    return get_html_response()
 
 
-def gunicorn(settings_override=None):
-    global app
-    gunicorn_logger = logging.getLogger("gunicorn.error")
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(logging.INFO)
-    main()
-    return app
-
-
-if __name__ == "__main__":
-    main()
+# if running with uvicorn
+def main():
+    uvicorn.run("python_template.main:app", host="0.0.0.0", port=8080, reload=True)
