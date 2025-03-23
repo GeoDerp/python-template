@@ -65,8 +65,8 @@ runs:
     - name: Install dependencies from requirements.txt as well as pytest and pytest-cov
       run: |
         ls | grep -q 'requirements.txt' && pipx install --include-deps requirements.txt
-        grep -q 'pytest' pyproject.toml && pipx install pytest
-        grep -q 'pytest-cov' pyproject.toml && pipx install pytest-cov
+        grep -q 'pytest' pyproject.toml && pipx install --include-deps pytest
+        grep -q 'pytest-cov' pyproject.toml && pipx install --include-deps pytest-cov
       shell: bash
 
     - name: Parse PyTest coverage xml file name option
