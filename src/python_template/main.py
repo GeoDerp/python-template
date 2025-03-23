@@ -17,10 +17,10 @@ def get_html_response() -> str:
 
 
 @app.get("/", response_class=HTMLResponse)
-async def root():
+async def root() -> str:
     return get_html_response()
 
 
 # if running with uvicorn
-def main():
+def main() -> None:
     uvicorn.run("python_template.main:app", host="0.0.0.0", port=8080, reload=True)

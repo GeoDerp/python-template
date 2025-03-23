@@ -7,10 +7,10 @@ from python_template.main import app
 
 
 class TestMain(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = TestClient(app)
 
-    def test_request_success(self):
+    def test_request_success(self) -> None:
         # Mock test, if request was successful and html was passed
         with (
             patch("os.path.isfile", return_value=True),
@@ -23,7 +23,7 @@ class TestMain(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.text, "<html><body>Hello, World!</body></html>")
 
-    def test_file_not_found(self):
+    def test_file_not_found(self) -> None:
         # Test if file is not found
         with patch("os.path.isfile", return_value=False):
             response = self.client.get("/")

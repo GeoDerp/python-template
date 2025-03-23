@@ -35,7 +35,7 @@ inputs:
     required: false
     default: 50
   uv_packages:
-    description: 'Additional uv tool packages to install independantly using uv'
+    description: 'Additional uv tool packages to install independently using uv'
     required: false
     default: ''
 
@@ -122,7 +122,7 @@ runs:
     - name: Type Check with Mypy
       shell: bash
       run: |
-        uvx mypy ${{ inputs.source_dir }}
+        uv run mypy ${{ inputs.source_dir }}
 
     - name: Override Coverage Source Path for Sonar
       # needed for converting pytest coverage to sonarcloud formatting, details here:
