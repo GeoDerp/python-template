@@ -23,4 +23,5 @@ async def root() -> str:
 
 # if running with uvicorn
 def main() -> None:
-    uvicorn.run("python_template.main:app", host="0.0.0.0", port=8080, reload=True)
+    interface = "127.0.0.1"
+    uvicorn.run("python_template.main:app", host=interface, port=8080, reload=True)
