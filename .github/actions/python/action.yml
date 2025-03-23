@@ -70,6 +70,23 @@ runs:
         grep -q 'pytest-cov' pyproject.toml || pip install pytest-cov
       shell: bash
 
+
+    - name: Check Format with Black
+      uses: psf/black@stable
+      with:
+        options: "--check --verbose --diff"
+        src: "./${{ inputs.source_dir }}"
+
+    - name: Error, Style Lint and Complexity Analysis with flake8
+      shell: bash
+      # with below, flake8 will run on ALL directories within $source_dir
+      # to exclude directories, edit .flake8
+      run: |
+        # flake8 - stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # flake8 - exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Parse PyTest coverage xml file name option
       shell: bash
       if: ${{ inputs.pytest_coverage_xml_file_name }} != ''
@@ -85,7 +102,7 @@ runs:
     - name: Test with PyTest
       shell: bash
       run: |
-        pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        pytest ${{ inputs.source_dir }} --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
 
     - name: Type Check with Mypy
       shell: bash
