@@ -4,8 +4,8 @@ on: [push]
 
 env:
   DOCKER_IMAGE_NAME: ""
-  SONAR_ORGANIZATION: ""
-  SONAR_PROJECT_KEY: ""
+  SONAR_ORGANIZATION: "geoderp"
+  SONAR_PROJECT_KEY: "GeoDerp_python-template"
   PYTHON_APP_SOURCE_DIR: "."
   PYTEST_COVERAGE_XML_FILE_NAME: "coverage-reports/coverage-pytest.xml"
   PYTEST_COVERAGE_THRESHOLD_PERCENT: 50
