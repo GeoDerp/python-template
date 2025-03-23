@@ -10,9 +10,10 @@
             },
             "args": [
                 "install",
+                "--include-deps",
                 "-e",
-                "--force",
-                "."
+                ".[test,dev]",
+                "--force"
             ],
             "presentation": {
                 "echo": true,

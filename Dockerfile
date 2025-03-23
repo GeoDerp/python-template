@@ -11,7 +11,7 @@ dnf install nodejs -y; \
 rm -rf /var/cache
 
 # install pipx
-RUN python$(cat .python-version) -m pip install --user pipx; python$(cat .python-version) -m pipx ensurepath
+RUN python$(cat .python-version) -m pip install --user pipx; python$(cat .python-version) -m pipx ensurepath  --global 
 
 # Install Trivy 
 RUN <<EOF cat >> /etc/yum.repos.d/trivy.repo
@@ -31,7 +31,7 @@ RUN dnf update -y; dnf install trivy -y; rm -rf /var/cache
 # COPY . .
 
 ## Install project requirements, build project
-# RUN source $HOME/.local/bin/env && pipx run pip install -e .[test,dev]
+# RUN source $HOME/.local/bin/env && pipx install --include-deps .[test,dev]
 
 ## Expose port and run app
 # EXPOSE 8080
