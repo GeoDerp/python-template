@@ -64,10 +64,10 @@ runs:
 
     - name: Install dependencies from requirements.txt and pyproject.toml, as well as pytest and pytest-cov
       run: |
-        ls | grep -q 'requirements.txt' && pipx install --include-deps requirements.txt
-        ls | grep -q 'pyproject.toml' && grep -q 'test' pyproject.toml && pipx install --include-deps .[test]
-        grep -q 'pytest' pyproject.toml || pipx install --include-deps pytest
-        grep -q 'pytest-cov' pyproject.toml || pipx install --include-deps pytest-cov
+        ls | grep -q 'requirements.txt' && pip install requirements.txt
+        ls | grep -q 'pyproject.toml' && grep -q 'test' pyproject.toml && pip install .[test]
+        grep -q 'pytest' pyproject.toml || pip install pytest
+        grep -q 'pytest-cov' pyproject.toml || pip install pytest-cov
       shell: bash
 
     - name: Parse PyTest coverage xml file name option
@@ -85,7 +85,18 @@ runs:
     - name: Test with PyTest
       shell: bash
       run: |
-        pipx run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+
+    - name: Type Check with Mypy
+      shell: bash
+      run: |
+        mypy ${{ inputs.source_dir }}
+
+    - name: Security Lint with Bandit
+      shell: bash
+      run: |
+        # bandit - log level low, critical issues only. Reports only if high confidence
+        bandit -ll -ii -r . -x ./.venv
 
     - name: Override Coverage Source Path for Sonar
       # needed for converting pytest coverage to sonarcloud formatting, details here:
