@@ -62,11 +62,12 @@ runs:
         python-version-file: ".python-version"
         cache: pip
 
-    - name: Install dependencies from requirements.txt as well as pytest and pytest-cov
+    - name: Install dependencies from requirements.txt and pyproject.toml, as well as pytest and pytest-cov
       run: |
         ls | grep -q 'requirements.txt' && pipx install --include-deps requirements.txt
-        grep -q 'pytest' pyproject.toml && pipx install --include-deps pytest
-        grep -q 'pytest-cov' pyproject.toml && pipx install --include-deps pytest-cov
+        ls | grep -q 'pyproject.toml' && grep -q 'test' pyproject.toml && pipx install --include-deps .[test]
+        grep -q 'pytest' pyproject.toml || pipx install --include-deps pytest
+        grep -q 'pytest-cov' pyproject.toml || pipx install --include-deps pytest-cov
       shell: bash
 
     - name: Parse PyTest coverage xml file name option
