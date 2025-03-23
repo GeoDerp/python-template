@@ -64,7 +64,7 @@ runs:
 
     - name: Install dependencies from requirements.txt as well as pytest and pytest-cov
       run: |
-        ls | grep -q 'requirements.txt' || pippipx run pip install requirements.txt
+        ls | grep -q 'requirements.txt' && pipx run pip install requirements.txt
         grep -q 'pytest' pyproject.toml || pipx run pip install  pytest
         grep -q 'pytest-cov' pyproject.toml || pipx run pip install pytest-cov
       shell: bash
