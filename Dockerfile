@@ -11,7 +11,7 @@ rm -rf /var/cache
 # Install uv, latest python and ruff 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN source $HOME/.local/bin/env && uv python install
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 RUN source $HOME/.local/bin/env && uv tool install ruff@latest
 
 # Install Trivy 
