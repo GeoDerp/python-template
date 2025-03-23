@@ -1,20 +1,20 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 
 RUN dnf update -y; \
-# Install git, nano
-dnf install git nano  -y; \
+# Install git, nano, python 
+dnf install git nano python3 -y; \
 # Install nodejs for SonarQube 
 dnf install nodejs -y; \
 # clear cache
 rm -rf /var/cache
 
-# Install uv, latest python and ruff 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN source $HOME/.local/bin/env && uv python install
+# install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PYTHONUNBUFFERED=1
-RUN source $HOME/.local/bin/env && uv tool install ruff@latest
+
 
 # Install Trivy 
+# Might need to comment out if devcontainer issues
 RUN <<EOF cat >> /etc/yum.repos.d/trivy.repo
 [trivy]
 name=Trivy repository
@@ -32,13 +32,12 @@ RUN dnf update -y; dnf install trivy -y; rm -rf /var/cache
 # COPY . .
 
 ## Install project requirements, build project
-# RUN source $HOME/.local/bin/env && uv pip install .  
+# RUN poetry python install $(cat .python-version)
+# RUN poetry install
 
 ## Expose port and run app
 # EXPOSE 8080
-
-# for uvicorn (FastAPI)
-# ENTRYPOINT [ "uv", "run", "fastapi", "run", "src/python_template/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0"]
+# ENTRYPOINT [ "poetry", "run", "fastapi", "run", "src/python_template/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0"]
 
 # for gunicorn (Flask)
-# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "uv", "run", "--frozen", "gunicorn", "'src/python_template/main.py:gunicorn()'" ]
+# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "poetry", "run", "--frozen", "gunicorn", "'src/python_template/main.py:gunicorn()'" ]

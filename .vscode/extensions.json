@@ -3,13 +3,15 @@
         // python
         "ms-python.debugpy",
         "ms-python.python",
-        // mypy
+        // mypy, black-formatter, flake8
         "ms-python.mypy-type-checker",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
         // docker 
         "ms-vscode-remote.remote-containers",
         "ms-azuretools.vscode-docker",
-        // Ruff
-        "charliermarsh.ruff",
+        // yaml
+        "redhat.vscode-yaml",
         // Sonar 
         "SonarSource.sonarlint-vscode",
         // Trivy

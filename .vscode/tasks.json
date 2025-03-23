@@ -3,22 +3,19 @@
     "tasks": [
         {
             "label": "Project Install",
-            "command": "uv",
+            "command": "poetry",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "args": [
-                "pip",
                 "install",
-                "--force-reinstall",
-                "."
             ],
             "presentation": {
                 "echo": true,
                 "panel": "shared",
                 "focus": true
             },
-        },
+        }
     ]
 }

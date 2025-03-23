@@ -1,12 +1,12 @@
-name: Python UV CI
-description: 'Builds, tests, and pushes a Python image with uv package management'
+name: Python Poetry CI
+description: 'Builds, tests, and pushes a Python image with Poetry package management'
 
 inputs:
   github_token:
     description: 'Automatically created token. Set this to the GITHUB_TOKEN secret'
     required: true
   gitleaks_token:
-    description: 'Organizational token for Gitleaks'
+    description: 'Organisational token for Gitleaks'
     required: false # only required for Organizations, not personal accounts
   sonar_token:
     description: 'Token for SonarCloud access'
@@ -26,6 +26,10 @@ inputs:
   source_dir:
     description: 'Source directory for the python application'
     required: true
+  python_version:
+    description: 'Required Python version'
+    required: false
+    default: "3.12"
   pytest_coverage_xml_file_name:
     description: 'PyTest coverage report path'
     required: false
@@ -34,13 +38,14 @@ inputs:
     description: 'Fails if coverage is under this percent'
     required: false
     default: 50
-  uv_packages:
-    description: 'Additional uv tool packages to install independently using uv'
+  poetry_version:
+    description: 'Required Poetry version'
+    required: false
+    default: '1.8.3'
+  pipx_packages:
+    description: 'Additional packages to install independantly using pipx'
     required: false
     default: ''
-
-env:
-  UV_SYSTEM_PYTHON: 1
 
 runs:
   using: 'composite'
@@ -50,6 +55,7 @@ runs:
       id: branch-names
       shell: bash
       run: echo "current_branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
 
     - name: Checkout code
       uses: actions/checkout@v4
@@ -65,42 +71,83 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITLEAKS_LICENSE: ${{ inputs.gitleaks_token }}
 
-    - name: Install uv
-      id: install_uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        enable-cache: true
-        cache-dependency-glob: "uv.lock"
+    - name: Setup Variables for pipx caching
+      id: variable_setup
+      run: |
+        echo "pipx_home=$PIPX_HOME" >> $GITHUB_OUTPUT
+        echo "pipx_bin_dir=$PIPX_BIN_DIR" >> $GITHUB_OUTPUT
+        export BASE64_PIPX_ID=$(echo -n 'poetry==${{ inputs.poetry_version }} ${{ inputs.pipx_packages }}' | base64 -w 0)
+        echo "cache_key_pipx=pipx-${{ runner.os }}-${{ inputs.python_version }}-$BASE64_PIPX_ID" >> $GITHUB_OUTPUT
+      shell: bash
 
+    - name: Cache pipx
+      id: cache_pipx
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ steps.variable_setup.outputs.pipx_home }}
+          ${{ steps.variable_setup.outputs.pipx_bin_dir }}
+        key: ${{ steps.variable_setup.outputs.cache_key_pipx }}
+
+
+    - name: Install Poetry ${{ inputs.poetry_version }} and '${{ steps.variable_setup.outputs.pipx_packages }}'
+      if: ${{ steps.cache_pipx.outputs.cache-hit != 'true' }}
+      run: |
+        export PIPX_TOOLS="black flake8 mypy bandit"
+        for tool in "poetry==${{ inputs.poetry_version }}" $PIPX_TOOLS ${{ inputs.pipx_packages }}; do
+          pipx install $tool
+        done
+        # Resolves https://github.com/python-poetry/poetry/issues/7611
+        poetry self add setuptools==68.1.2
+        pipx inject flake8 flake8-bugbear
+      shell: bash
+
+    - name: Debug pipx
+      run: |
+        pipx ensurepath
+        pipx list
+      shell: bash
 
     - name: Set up Python
       uses: actions/setup-python@v5
       id: setup_python
       with:
-        python-version-file: ".python-version"
+        python-version: ${{ inputs.python_version }}
+        cache: poetry
 
-    - name: Debug uv
+    - name: Poetry config
       run: |
-        pipx ensurepath # uv should be in the same path
-        uv tree
+        poetry config virtualenvs.in-project true --local
       shell: bash
 
-    - name: Install uv dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: uv sync --all-extras --dev
-      shell: bash
-
-    - name: Check Format with ruf
-      uses: astral-sh/ruff-action@v3
+    - name: Cache Poetry .venv
+      uses: actions/cache@v3
+      id: cached_poetry_dependencies
       with:
-        args: "format --check"
+        path: .venv
+        key: venv-${{ runner.os }}-${{ inputs.python_version }}-${{ inputs.poetry_version }}-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install Poetry dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: |
+        poetry --no-interaction install
+      shell: bash
+
+    - name: Check Format with Black
+      uses: psf/black@stable
+      with:
+        options: "--check --verbose --diff"
         src: "./${{ inputs.source_dir }}"
 
-    - name: Install '${{ steps.variable_setup.outputs.uv_packages }} mypy pytest-cov'
-      run: |
-        uv pip install pytest-cov ${{ steps.variable_setup.outputs.uv_packages }}
-        uv tool install mypy
+    - name: Error, Style Lint and Complexity Analysis with flake8
       shell: bash
+      # with below, flake8 will run on ALL directories within $source_dir
+      # to exclude directories, edit .flake8
+      run: |
+        # flake8 - stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # flake8 - exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Parse PyTest coverage xml file name option
       shell: bash
@@ -114,15 +161,22 @@ runs:
       run: |
         echo "pytest_fail_percent_options=$(echo '--cov-fail-under=${{ inputs.pytest_coverage_threshold_percent }}')" >> $GITHUB_ENV
 
-    - name: Test with PyTest-cov
+    - name: Test with PyTest
       shell: bash
       run: |
-        uv run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        poetry run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
 
     - name: Type Check with Mypy
       shell: bash
       run: |
-        uv run mypy ${{ inputs.source_dir }}
+        mypy ${{ inputs.source_dir }}
+
+    - name: Security Lint with Bandit
+      shell: bash
+      run: |
+        # bandit - log level low, critical issues only. Reports only if high confidence
+        bandit -ll -ii -r . -x ./.venv
+
 
     - name: Override Coverage Source Path for Sonar
       # needed for converting pytest coverage to sonarcloud formatting, details here:
@@ -171,7 +225,7 @@ runs:
       with:
         image-ref: ${{ inputs.docker_image_name }}:${{ env.formatted_branch_name }}
         format: template
-        template: ".github/actions/python-uv/trivy.tpl"
+        template: ".github/actions/python-poetry/trivy.tpl"
         output: trivy-high-critical.md
         ignore-unfixed: true
         vuln-type: 'os,library'

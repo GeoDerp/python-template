@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "python-uv-devcontainer",
+	"name": "python-poetry-devcontainer",
 	"build": {
 		"dockerfile": "../Dockerfile",
 		"context": "../"
@@ -26,9 +26,10 @@
 		  "extensions": [
 			"ms-python.debugpy",
 			"ms-python.python",
-			"charliermarsh.ruff",
 			"SonarSource.sonarlint-vscode",
 			"AquaSecurityOfficial.trivy-vulnerability-scanner",
+			"ms-python.black-formatter",
+			"ms-python.flake8",
 			"ms-python.mypy-type-checker"
 		],
 		  "settings": {
@@ -38,12 +39,9 @@
 				"source.fixAll": "explicit",
 				"source.organizeImports": "explicit"
 			  },
-			  "editor.defaultFormatter": "charliermarsh.ruff"
+			  "editor.defaultFormatter": "ms-python.black-formatter"
 			}
 		  }
 		}
-	  },
-
-	"postCreateCommand": [ "uv", "venv" ]
-	  
+	  }	  
 }
