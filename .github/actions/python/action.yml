@@ -59,13 +59,14 @@ runs:
       uses: actions/setup-python@v5
       id: setup_python
       with:
+        python-version-file: ".python-version"
         cache: pip
 
     - name: Install dependencies from requirements.txt as well as pytest and pytest-cov
       run: |
-        pip install pyproject.toml
-        grep -q 'pytest' pyproject.toml || pip install pytest
-        grep -q 'pytest-cov' pyproject.toml || pip install pytest-cov
+        ls | grep -q 'requirements.txt' || pippipx run pip install requirements.txt
+        grep -q 'pytest' pyproject.toml || pipx run pip install  pytest
+        grep -q 'pytest-cov' pyproject.toml || pipx run pip install pytest-cov
       shell: bash
 
     - name: Parse PyTest coverage xml file name option
@@ -83,7 +84,7 @@ runs:
     - name: Test with PyTest
       shell: bash
       run: |
-        pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
+        pipx run pytest --cov ${{ env.pytest_report_name_options }} ${{ env.pytest_fail_percent_options }}
 
     - name: Override Coverage Source Path for Sonar
       # needed for converting pytest coverage to sonarcloud formatting, details here:
