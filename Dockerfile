@@ -1,12 +1,17 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 
+COPY .python-version .python-version
+
 RUN dnf update -y; \
 # Install git, nano & Python
-dnf install git nano python3 python3-pip -y; \
+dnf install git nano python$(cat .python-version) python$(cat .python-version)-pip -y; \
 # Install nodejs for SonarQube 
 dnf install nodejs -y; \
 # clear cache
 rm -rf /var/cache
+
+#install pipx
+RUN python$(cat .python-version) -m pip install --user pipx; python$(cat .python-version) -m pipx ensurepath
 
 # Install Trivy 
 RUN <<EOF cat >> /etc/yum.repos.d/trivy.repo
@@ -26,13 +31,13 @@ RUN dnf update -y; dnf install trivy -y; rm -rf /var/cache
 # COPY . .
 
 ## Install project requirements, build project
-# RUN source $HOME/.local/bin/env && uv pip install .  
+# RUN source $HOME/.local/bin/env &&  pipx install .["test","dev"]
 
 ## Expose port and run app
 # EXPOSE 8080
 
 # for uvicorn (FastAPI)
-# ENTRYPOINT [ "uv", "run", "fastapi", "run", "src/python_template/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0"]
+# ENTRYPOINT [ "pipx", "run", "fastapi", "run", "src/python_template/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0"]
 
 # for gunicorn (Flask)
-# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "uv", "run", "--frozen", "gunicorn", "'src/python_template/main.py:gunicorn()'" ]
+# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "pipx", "run", "--frozen", "gunicorn", "'src/python_template/main.py:gunicorn()'" ]

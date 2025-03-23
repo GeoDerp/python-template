@@ -1,7 +1,7 @@
 [project]
 name = "python_template"
 version = "0.1.0"
-description = "A simple FastAPI Python template with Uv"
+description = "A simple FastAPI Python template"
 readme = "README.md"
 authors = []
 
@@ -18,30 +18,29 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
-    "Framework :: FastAPI" # Add fastapi framework
+    "Framework :: FastAPI",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-package = true
-
 [project.scripts]
 python_template = "python_template.main:main"
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.11.0",
     "mypy>=1.6.0",
+    "flake8>=6.0.0",
+    "black>=23.10.0",
     "pytest>=7.3.1",
     "hatchling",
-    "types-waitress"
+    "types-waitress",
 ]
 test = [
-    "ruff>=0.11.0",
     "mypy>=1.6.0",
+    "flake8>=6.0.0",
+    "black>=23.10.0",
     "pytest>=7.3.1",
     "pytest-cov>=4.1.0",
 ]
@@ -58,27 +57,26 @@ include = [
 
 [tool.hatch.envs.default]
 dependencies = [
-    "ruff>=0.11.0",
     "mypy>=1.6.0",
+    "flake8>=6.0.0",
+    "black>=23.10.0",
     "pytest>=7.3.1",
     "pytest-cov>=4.1.0",
-    "types-waitress"
+    "types-waitress",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest --cov=src/python_template tests"
-lint = "ruff check src tests pyproject.toml && mypy src tests"
-format = "ruff format src tests pyproject.toml"
+lint = "flake8 src tests && mypy src tests"
+format = "black src tests pyproject.toml"
 run = "uvicorn python_template:app --reload"
 clean = "rm -rf .coverage .pytest_cache dist build"
 
-[tool.ruff.lint]
-select = ["E", "W", "F", "I", "C", "B", "Q", "UP", "YTT", "PYI"]
-ignore = ["E501", "B008", "B905"] 
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
 
-
-[tool.ruff]
-target-version = "py311" 
-src = ["src", "tests"]
+[tool.black]
+line-length = 88
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -93,7 +91,7 @@ strict = true
 [tool.coverage.run]
 branch = true
 source = ["src/python_template"]
-omit = ["src/python_template/templates/*"] 
+omit = ["src/python_template/templates/*"]
 
 [tool.coverage.paths]
 source = ["src/python_template"]

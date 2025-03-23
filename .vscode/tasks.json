@@ -3,7 +3,7 @@
     "tasks": [
         {
             "label": "Project Install",
-            "command": "pip",
+            "command": "pipx",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -11,6 +11,7 @@
             "args": [
                 "install",
                 "-e",
+                "--force",
                 "."
             ],
             "presentation": {
