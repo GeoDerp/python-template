@@ -71,6 +71,8 @@ runs:
         ls | grep -q 'pyproject.toml' && grep -q 'test' pyproject.toml && pip install .[test]
         grep -q 'pytest' pyproject.toml || pip install pytest
         grep -q 'pytest-cov' pyproject.toml || pip install pytest-cov
+        grep -q 'bandit' pyproject.toml || pip install bandit
+        grep -q 'mypy' pyproject.toml || pip install mypy
       shell: bash
 
     - name: Check Format with Black
