@@ -71,16 +71,18 @@ format = "black src tests pyproject.toml"
 run = "uvicorn python_template:app --reload"
 clean = "rm -rf .coverage .pytest_cache dist build"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]
+minversion = "6.0"
+addopts = "-ra -q"
+
 [tool.flake8]
 max-line-length = 88
 extend-ignore = ["E203"]
 
 [tool.black]
 line-length = 88
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-filterwarnings = ["error"]
 
 [tool.mypy]
 python_version = "3.11"
