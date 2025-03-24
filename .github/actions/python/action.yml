@@ -39,6 +39,10 @@ runs:
   using: 'composite'
   steps:
 
+    - name: set pip env
+      shell: bash
+      run: echo "PIP_BREAK_SYSTEM_PACKAGES=1" >> "${GITHUB_ENV}"
+
     - name: Extract branch name
       id: branch-names
       shell: bash
@@ -72,7 +76,6 @@ runs:
         grep -q 'pytest' pyproject.toml || pip install pytest
         grep -q 'pytest-cov' pyproject.toml || pip install pytest-cov
       shell: bash
-
 
     - name: Check Format with Black
       uses: psf/black@stable
