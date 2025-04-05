@@ -141,7 +141,6 @@ runs:
     - name: Upload SARIF report to GitHub (even if previous step failed)
       if: always()
       uses: github/codeql-action/upload-sarif@v3
-      working-directory: ${{ inputs.source_dir }}
       with:
         sarif_file: semgrep-output.sarif
         category: semgrep
