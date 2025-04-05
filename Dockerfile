@@ -1,12 +1,17 @@
-FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM registry.access.redhat.com/ubi9/ubi:latest AS base
 
-RUN dnf update -y; \
+
+ENV container=oci
+ENV USER=default
+
+USER root
+
+# Check for package update
+RUN dnf -y update-minimal --security --sec-severity=Important --sec-severity=Critical && \
 # Install git, nano
 dnf install git nano  -y; \
-# Install nodejs for SonarQube 
-dnf install nodejs -y; \
 # clear cache
-rm -rf /var/cache
+dnf clean all
 
 # Install uv, latest python and ruff 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -14,31 +19,37 @@ RUN source $HOME/.local/bin/env && uv python install
 ENV PYTHONUNBUFFERED=1
 RUN source $HOME/.local/bin/env && uv tool install ruff@latest
 
-# Install Trivy 
-RUN <<EOF cat >> /etc/yum.repos.d/trivy.repo
-[trivy]
-name=Trivy repository
-baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
-EOF
-RUN dnf update -y; dnf install trivy -y; rm -rf /var/cache
+# Dev target
+FROM base AS dev
+COPY .devcontainer/devtools.sh /tmp/devtools.sh
+RUN  /tmp/devtools.sh
+USER default
 
-# OPTIONAL DEPLOYMENT EXAMPLE:
+# DEPLOYMENT EXAMPLE:
 #-----------------------------
+
+# Prod target
+FROM base
+
 ## Make App folder, copy project into container
-# WORKDIR /app
-# COPY . .
+WORKDIR /app
+## REPLACE: replace this COPY statement with project specific files/folders
+COPY . . 
 
 ## Install project requirements, build project
-# RUN source $HOME/.local/bin/env && uv pip install .  
+RUN source $HOME/.local/bin/env && uv pip install .  
+
+## clarify permissions
+RUN chown -R default:0 /app && \
+    chmod -R g=u /app
 
 ## Expose port and run app
-# EXPOSE 8080
+EXPOSE 8080
 
-# for uvicorn (FastAPI)
-# ENTRYPOINT [ "uv", "run", "fastapi", "run", "src/python_template/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0"]
+USER default
 
-# for gunicorn (Flask)
-# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "uv", "run", "--frozen", "gunicorn", "'src/python_template/main.py:gunicorn()'" ]
+#for uvicorn (FastAPI)
+CMD [ "uv", "run", "fastapi", "run", "src/**/main.py", "--port", "8080", "--workers", "4" "--host", "0.0.0.0" ]
+
+# for gunicorn (eg. Flask)
+# CMD [ "GUNICORN_CMD_ARGS='--bind=0.0.0.0:8080 --workers=8'", "uv", "run", "--frozen", "gunicorn", "'src/python_template/main.py'" ]
