@@ -14,10 +14,13 @@ dnf install git nano  -y; \
 dnf clean all
 
 # Install uv, latest python and ruff 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN source $HOME/.local/bin/env && uv python install
+COPY .python-version .python-version
 ENV PYTHONUNBUFFERED=1
-RUN source $HOME/.local/bin/env && uv tool install ruff@latest
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN source $HOME/.local/bin/env && \
+uv python install && \
+uv python pin --global && \
+uv tool install ruff@latest
 
 # Dev target
 FROM base AS dev
@@ -39,7 +42,7 @@ COPY . .
 ## Install project requirements, build project
 RUN source $HOME/.local/bin/env && \
     uv pip install . --system
-    
+
 ## clarify permissions
 RUN chown -R default:0 /app && \
     chmod -R g=u /app
