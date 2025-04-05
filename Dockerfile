@@ -37,8 +37,9 @@ WORKDIR /app
 COPY . . 
 
 ## Install project requirements, build project
-RUN source $HOME/.local/bin/env && uv pip install .  
-
+RUN source $HOME/.local/bin/env && \
+    uv pip install . --system
+    
 ## clarify permissions
 RUN chown -R default:0 /app && \
     chmod -R g=u /app
