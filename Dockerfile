@@ -19,7 +19,6 @@ ENV PYTHONUNBUFFERED=1
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN source $HOME/.local/bin/env && \
 uv python install && \
-uv python pin --global && \
 uv tool install ruff@latest
 
 # Dev target
