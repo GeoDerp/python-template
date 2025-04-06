@@ -40,6 +40,7 @@ COPY . .
 
 ## Install project requirements, build project
 RUN source $HOME/.local/bin/env && \
+    uv python install && \
     uv pip install . --system
 
 ## clarify permissions
