@@ -66,7 +66,7 @@ dependencies = [
     "types-waitress",
 ]
 [tool.hatch.envs.default.scripts]
-test = "pytest --cov=src/python_template tests"
+test = "pytest --cov=. --cov-report=xml:coverage-reports/coverage-pytest.xml --cov-report=term-missing:skip-covered --cov-fail-under=50"
 lint = "flake8 src tests && mypy src tests"
 format = "black src tests pyproject.toml"
 run = "uvicorn python_template:app --reload"

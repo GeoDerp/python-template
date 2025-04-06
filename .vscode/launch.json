@@ -1,6 +1,14 @@
 {
   "configurations": [
     {
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Python Debugger: FastAPI",
       "type": "debugpy",
       "request": "launch",
@@ -40,14 +48,6 @@
       ],
       "justMyCode": true,
       "env": {},
-    },
-    {
-      "name": "Python: Current File",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal",
-      "justMyCode": true
     }
   ]
 }
