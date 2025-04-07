@@ -148,7 +148,7 @@ runs:
     - name: Add semgrep output to action summary
       working-directory: ${{ inputs.source_dir }}
       run: |
-        python -m .github/actions/python/semgrep.py >> $GITHUB_STEP_SUMMARY
+        python3 -m .github/actions/python/semgrep.py >> $GITHUB_STEP_SUMMARY
       shell: bash
 
     - name: Set up QEMU
