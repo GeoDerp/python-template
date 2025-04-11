@@ -10,10 +10,12 @@ for (var i = 0; i < data.results.length; i++) {
     html += "<td>" + data.results[i].extra.metadata.likelihood + "</td>";
     html += "<td>" + data.results[i].extra.metadata.impact	+ "</td>";
     html += "<td>" + '<a href="' + data.results[i].extra.metadata.references[0] + '">' + data.results[i].extra.metadata.cwe[0] + "</a> "+ "</td>";
+    html += "<td>" + JSON.stringify(data.results[i].path) + "</td>";
     html += "<td>" + JSON.stringify(data.results[i].start) + ":" + JSON.stringify(data.results[i].end) + "</td>";
     html += "<td>" + JSON.stringify(data.results[i].extra.metadata.technology) + "</td>";
     html += "</table>";
     html += "<p>" + data.results[i].extra.message + "</p>";
+    <br></br>
   }
 }
 console.log(html);
