@@ -29,11 +29,6 @@ inputs:
     required: false
     default: 50
 
-permissions:
-  actions: read
-  contents: read
-  security-events: write
-
 runs:
   using: 'composite'
   steps:
@@ -182,7 +177,7 @@ runs:
         severity: 'CRITICAL,HIGH'
     - name: Add Trivy output to action summary
       run: |
-        echo "<h1>Trivy Results :test_tube:</h1>" >> $GITHUB_STEP_SUMMARY
+        echo "<h1>Trivy Results :test_tube:</h1>" >> $GITHUB_STEP_SUMMARY; \
         cat trivy-high-critical.html >> $GITHUB_STEP_SUMMARY
       shell: bash
 
