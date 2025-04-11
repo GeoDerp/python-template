@@ -15,7 +15,7 @@ for (var i = 0; i < data.results.length; i++) {
     html += "<td>" + JSON.stringify(data.results[i].extra.metadata.technology) + "</td>";
     html += "</table>";
     html += "<p>" + data.results[i].extra.message + "</p>";
-    <br></br>
+    <br>
   }
 }
 console.log(html);
