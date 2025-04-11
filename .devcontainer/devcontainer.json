@@ -49,7 +49,7 @@
 			},
 			 "editor.tabSize": 4,
 			 "workbench.tree.indent": 14,
-			 "trivy.offlineScan": true
+			 "trivy.offlineScan": true           
 			 //"files.autoSaveWhenNoErrors": true,
 			 //"files.autoSaveWorkspaceFilesOnly": true
 		  }
