@@ -31,11 +31,6 @@ runs:
   using: 'composite'
   steps:
 
-    - name: Extract branch name
-      id: branch-names
-      shell: bash
-      run: echo "current_branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-
     - name: Checkout code
       uses: actions/checkout@v4
       with:
@@ -56,7 +51,6 @@ runs:
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
-
 
     - name: Set up Python
       uses: actions/setup-python@v5

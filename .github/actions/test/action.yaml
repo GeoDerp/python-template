@@ -8,6 +8,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Extract branch name
+      id: branch-names
+      shell: bash
+      run: echo "current_branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
 
