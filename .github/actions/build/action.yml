@@ -137,5 +137,5 @@ runs:
     - name: Add semgrep output to action summary
       working-directory: ${{ inputs.source_dir }}
       run: |
-        node .github/actions/python-uv/semgrep.js >> $GITHUB_STEP_SUMMARY
+        node .github/actions/build/semgrep.js >> $GITHUB_STEP_SUMMARY
       shell: bash
