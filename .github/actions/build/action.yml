@@ -133,3 +133,9 @@ runs:
       run: |
         node .github/actions/build/semgrep.js >> $GITHUB_STEP_SUMMARY
       shell: bash
+
+    - name: Google OSV static dependency scan
+      uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.0.0"
+      with:
+        scan-args: |-
+          ${{ inputs.source_dir }}/
