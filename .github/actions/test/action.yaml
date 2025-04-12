@@ -47,7 +47,6 @@ runs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: trivy.sarif
-        category: trivy
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
